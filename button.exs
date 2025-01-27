@@ -64,7 +64,7 @@ defmodule Pushover do
 
     dbg(params)
 
-    "brhttps://api.pushover.net/1/messages.json"
+    "https://api.pushover.net/1/messages.json"
     |> Req.post!(json: params).body
     |> dbg()
   end
