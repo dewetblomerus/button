@@ -2,9 +2,7 @@ version: "3.8"
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: hexpm/elixir:1.18.2-erlang-27.2.1-debian-bookworm-20250113-slim
     environment:
       - PUSHOVER_TOKEN=${PUSHOVER_TOKEN}
       - PUSHOVER_USER=${PUSHOVER_USER}
@@ -18,3 +16,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: elixir button.exs
