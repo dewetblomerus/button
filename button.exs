@@ -22,8 +22,7 @@ defmodule RequestHandler do
   @config %{
     "/knox/knocked" => %{
       message: "Knox Knocked",
-      priority: 0,
-      sound: "bike"
+      priority: 0
     },
     "/knox/emergency" => %{
       expire: 10000,
