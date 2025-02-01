@@ -50,6 +50,9 @@ defmodule RequestHandler do
 end
 
 defmodule Pushover do
+  @pushover_token System.fetch_env!("PUSHOVER_TOKEN")
+  @pushover_user System.fetch_env!("PUSHOVER_USER")
+
   def send_message(message_params) do
     params =
       %{
@@ -58,8 +61,8 @@ defmodule Pushover do
         priority: Map.fetch!(message_params, :priority),
         sound: Map.get(message_params, :sound),
         retry: Map.get(message_params, :retry),
-        token: System.fetch_env!("PUSHOVER_TOKEN"),
-        user: System.fetch_env!("PUSHOVER_USER")
+        token: @pushover_token,
+        user: @pushover_user
       }
       |> Enum.reject(fn {_k, v} -> is_nil(v) end)
       |> Map.new()
