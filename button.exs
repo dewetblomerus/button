@@ -22,13 +22,15 @@ defmodule RequestHandler do
   @config %{
     "/knox/knocked" => %{
       message: "Knox Knocked",
-      priority: 0
+      priority: 0,
+      sound: "bike"
     },
     "/knox/emergency" => %{
+      expire: 10000,
       message: "Knox Pressed Emergency Button",
       priority: 2,
       retry: 30,
-      expire: 10000
+      sound: "persistent"
     }
   }
   def call("/favicon.ico"), do: "favicon.ico"
@@ -52,12 +54,13 @@ defmodule Pushover do
   def send_message(message_params) do
     params =
       %{
-        token: System.fetch_env!("PUSHOVER_TOKEN"),
-        user: System.fetch_env!("PUSHOVER_USER"),
+        expire: Map.get(message_params, :expire, nil),
         message: Map.fetch!(message_params, :message),
         priority: Map.fetch!(message_params, :priority),
-        retry: Map.get(message_params, :retry, nil),
-        expire: Map.get(message_params, :expire, nil)
+        sound: Map.get(message_params, :sound),
+        retry: Map.get(message_params, :retry),
+        token: System.fetch_env!("PUSHOVER_TOKEN"),
+        user: System.fetch_env!("PUSHOVER_USER")
       }
       |> Enum.reject(fn {_k, v} -> is_nil(v) end)
       |> Map.new()
