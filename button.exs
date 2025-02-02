@@ -3,28 +3,29 @@ Mix.install([
   {:req, "~> 0.5.8"}
 ])
 
-defmodule ApiPlug do
-  import Plug.Conn
+defmodule Router do
+  use Plug.Router
+  plug(Plug.Logger)
+  plug(:match)
+  plug(:dispatch)
 
-  def init(options), do: options
+  get "/notify/:action" do
+    Notify.call(action)
+    send_resp(conn, 200, action)
+  end
 
-  def call(%Plug.Conn{request_path: request_path} = conn, _opts) do
-    message_body = RequestHandler.call(request_path)
-
-    conn
-    |> put_resp_content_type("text/plain")
-    |> send_resp(200, message_body)
-    |> halt()
+  match _ do
+    send_resp(conn, 404, "not found")
   end
 end
 
-defmodule RequestHandler do
+defmodule Notify do
   @config %{
-    "/knox/knocked" => %{
+    "knox_knocked" => %{
       message: "Knox Knocked",
       priority: 0
     },
-    "/knox/emergency" => %{
+    "knox_emergency" => %{
       expire: 10000,
       message: "Knox Pressed Emergency Button",
       priority: 2,
@@ -32,17 +33,15 @@ defmodule RequestHandler do
       sound: "persistent"
     }
   }
-  def call("/favicon.ico"), do: "favicon.ico"
-
-  def call(request_path) do
+  def call(action) do
     message_body =
-      case Map.get(@config, request_path) do
+      case Map.get(@config, action) do
         %{} = message_params ->
           Pushover.send_message(message_params)
           message_params.message
 
         _ ->
-          "Unsupported Request Path: #{request_path}" |> dbg()
+          "Unsupported Request: #{action}" |> dbg()
       end
 
     message_body
@@ -74,7 +73,7 @@ defmodule Pushover do
   end
 end
 
-bandit = {Bandit, plug: ApiPlug, port: System.fetch_env!("PORT")}
+bandit = {Bandit, plug: Router, port: System.fetch_env!("PORT")}
 
 {:ok, _} = Supervisor.start_link([bandit], strategy: :one_for_one)
 
