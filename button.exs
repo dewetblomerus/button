@@ -33,6 +33,7 @@ defmodule Notify do
       sound: "persistent"
     }
   }
+
   def call(action) do
     message_body =
       case Map.get(@config, action) do
