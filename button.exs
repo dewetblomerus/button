@@ -74,11 +74,9 @@ defmodule Pushover do
   end
 end
 
-children = [
-  {Bandit, plug: ApiPlug, port: System.fetch_env!("PORT")}
-]
+bandit = {Bandit, plug: ApiPlug, port: System.fetch_env!("PORT")}
 
 opts = [strategy: :one_for_one, name: Button.Supervisor]
-{:ok, _} = Supervisor.start_link(children, opts)
+{:ok, _} = Supervisor.start_link([bandit], opts)
 
 Process.sleep(:infinity)
