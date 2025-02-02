@@ -10,8 +10,8 @@ defmodule Router do
   plug(:dispatch)
 
   get "/notify/:action" do
-    message = Notify.call(action)
-    send_resp(conn, 200, message)
+    response = Notify.call(action)
+    send_resp(conn, response.status, response.message)
   end
 
   match _ do
@@ -39,10 +39,17 @@ defmodule Notify do
       case Map.get(@config, action) do
         %{} = message_params ->
           Pushover.send_message(message_params)
-          message_params.message
+
+          %{
+            message: message_params.message,
+            status: 200
+          }
 
         _ ->
-          "Unsupported Request: #{action}" |> dbg()
+          %{
+            message: "Unsupported Request: #{action}",
+            status: 404
+          }
       end
 
     message_body
