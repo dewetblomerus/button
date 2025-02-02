@@ -76,7 +76,6 @@ end
 
 bandit = {Bandit, plug: ApiPlug, port: System.fetch_env!("PORT")}
 
-opts = [strategy: :one_for_one, name: Button.Supervisor]
-{:ok, _} = Supervisor.start_link([bandit], opts)
+{:ok, _} = Supervisor.start_link([bandit], strategy: :one_for_one)
 
 Process.sleep(:infinity)
