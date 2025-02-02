@@ -10,8 +10,8 @@ defmodule Router do
   plug(:dispatch)
 
   get "/notify/:action" do
-    Notify.call(action)
-    send_resp(conn, 200, action)
+    message = Notify.call(action)
+    send_resp(conn, 200, message)
   end
 
   match _ do
