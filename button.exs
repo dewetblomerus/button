@@ -69,8 +69,10 @@ defmodule Pushover do
 
     dbg(params)
 
-    "https://api.pushover.net/1/messages.json"
-    |> Req.post!(json: params)
+    Req.post!(
+      "https://api.pushover.net/1/messages.json",
+      json: params
+    )
   end
 end
 
