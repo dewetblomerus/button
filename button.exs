@@ -23,7 +23,7 @@ defmodule Notify do
   @config %{
     "knox_knocked" => %{
       message: "Knox Knocked",
-      priority: 0
+      priority: 1
     },
     "knox_emergency" => %{
       expire: 10000,
